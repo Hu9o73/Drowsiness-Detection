@@ -24,7 +24,7 @@
 
 %--------------------------------------
 
-\section{Pre-Project}
+\section{Problem Overview}
 
 \subsection{Problem Definition}
 
@@ -80,8 +80,9 @@ The scope of this project covers the development, testing, and evaluation of a c
 A structured Gantt chart outlines each phase of this project, helping to ensure timely and organized progression. The tasks are divided into four major phases: Implementing a standard solution, improving it for stage 2, further improvements for stage 3 and finally, Report and Presentation Preparation. Each task is designed with inter-dependencies in mind, ensuring a streamlined workflow and timely completion of project milestones.
 
 %---------------------------------------
+\newpage
 
-\section{Stage 1}
+\section{Preparing the Data and the Analysis}
 
 \subsection{Problem Formalization}
 \subsubsection{Problem Statement}
@@ -89,7 +90,7 @@ The primary objective here is to develop a machine-learning-powered system that 
 \subsubsection{Understanding the Dataset}
 As we said before, our dataset consists of labeled images indicating whether a driver’s eyes are “open” or “closed” and mouth states as “yawn” or “no yawn.” The data is balanced: we have the same distribution between classes (726 for both closed and open and 723/725 for yawn and no yawn respectively) so we won’t have an issue with biased model prediction or poor performance on minority class. \\
 
-\textbf{Dataset Overview:} \\
+\textbf{Dataset Overview:}
 \begin{table}[H]
     \centering
     \begin{tabular}{|c|c|c|c|}
@@ -106,22 +107,43 @@ As we said before, our dataset consists of labeled images indicating whether a d
         \\
         \hline
     \end{tabular}
-    \caption{Un tableau simple.}
+    \caption{Examples of images per label.}
 \end{table}
 
-We notice that the images don't share the same format, we'll thus be tackling this issue.
+\newpage
+\textbf{Data Characteristics:}
+\begin{itemize}
+    \item Our dataset is made of images. Each image can be represented as a matrix. Each value in this matrix is an array with the RGB values of the corresponding pixel.
+    \item The images in our dataset don't share the same dimensions. This may yield unexpected results after training models on this data. Thus, we'll have to handle image formatting before doing any train.\\
+\end{itemize}
+
+\textbf{Model goals:}
+\begin{itemize}
+    \item \textbf{Primary objective :} 
+    \begin{itemize}
+        \item Being able to tell if a driver is showing tireness symptoms.
+    \end{itemize}
+    \item \textbf{Secondary objectives :}
+    \begin{itemize}
+        \item Ensure our model is robust.
+        \item Ensure the model can handle a variety of data inputs by not over-fitting.
+    \end{itemize}
+\end{itemize}
 
 \subsection{Refining the Dataset}
 Our initial task involved meticulously cleaning and pre-processing the data. This process was crucial to ensure the integrity and usability of the dataset for machine learning models. Key steps included: 
 \begin{itemize}
     \item To handle missing or corrupted values.
     \item To remove duplicates if any.
-    \item To make sure that all pictures have the same size. 
+    \item To make sure that all pictures have the same size.
 \end{itemize}
 
 \subsection{Evaluation Metrics}
 
-In addition to \textbf{accuracy}, we considered other metrics like \textbf{precision, recall, and F1 score} for a comprehensive assessment of our models. These metrics provided a more nuanced view of the model's performance because we need to be as accurate as possible. 
+\begin{itemize}
+    \item In addition to \textbf{accuracy}, we considered other metrics like \textbf{precision, recall, and F1 score} for a comprehensive assessment of our models. These metrics provided a more nuanced view of the model's performance because we need to be as accurate as possible. 
+    \item We'll also use \textbf{Confusion Matrices} as a mean of better understanding the results of the models we're testing.
+\end{itemize}
 
 \subsection{Data cleaning and pre-processing}
 
@@ -202,8 +224,7 @@ def remove_duplicates(dataset_path):
 
     return ("There are no duplicate images")
 
-# Example usage:
-# Assuming 'path' is your base dataset path
+
 remove_duplicates(path + "/train/Closed")
 remove_duplicates(path + "/train/Open")
 remove_duplicates(path + "/train/yawn")
@@ -215,8 +236,8 @@ remove_duplicates(path + "/train/no_yawn")
 'There are no duplicate images'
 \end{codebox}
 
-As stated, the pictures are all unique, we can use all of them.
-
+As stated in Code 4, the pictures are all unique, we can use all of them.
+\newpage
 Finally, we will use some pre-processing techniques such as:\\
 \begin{itemize}
 
@@ -244,6 +265,8 @@ images, labels = load_images(path+'/train')
 \end{minted}
 \end{codebox}
 
+\bigskip
+
 \item \textbf{Normalization} to creates a consistency in pixel value ranges for better training and numerical stability, to make every pixel of the image having a value between 0 and 1 instead of 0 and 255.\\
 
 \begin{codebox}[Image Normalization]{Normalize images \texttt{Python}}
@@ -255,5 +278,249 @@ X = X/255.0
 
 \end{itemize}
 
-/insererbiblio
+%---------------------------------------
+\newpage
+
+\section{Analysis}
+
+In this section, we evaluate and compare the performance of three machine learning classifiers—Support Vector Machine (SVM), Random Forest, and Logistic Regression—on the task of recognizing and classifying images into one of four categories: "eyes open," "eyes closed," "yawn," and "no yawn." Each classifier uses the same dataset of raw pixel features, enabling a direct comparison of their strengths and weaknesses. By examining key metrics such as precision, recall, F1-score, and overall accuracy, we aim to identify the most effective model for this task and highlight areas for potential improvement in future iterations. Dataset is split as : 20\% for testing and 80\% for training.
+\\The hyperparameters retained in this document are the best we found after fine tuning.
+\subsection{SVM Classifier}
+
+\bigskip
+
+\textbf{Description}
+
+\begin{itemize}
+    \item \textbf{Objective:} The SVM aims to find the optimal hyperplane that separates the classes ("eyes opened", "eyes closed", "yawn", "no yawn") with the maximum margin in a high-dimensional feature space.
+
+    \item \textbf{Input:} The SVM takes the image features as input. These features are the raw pixel values.
+
+    \item \textbf{Output:} The classifier outputs a binary label for each input image.
+
+    \item \textbf{Hyperparameters:}
+    \begin{itemize}
+        \item Kernel : Specifies the kernel type to be used in the SVM algorithm. Here: 'linear', which means the model attempts to separate data using a linear hyperplane.
+        \item Random state : Fixed seed for the random number generator. We used 42.
+    \end{itemize}
+\end{itemize}
+
+\textbf{Code and outputs}
+\begin{codebox}[SVM Classifier]{SVM Classifier \texttt{Python}}
+\begin{minted}{python}
+from sklearn.svm import SVC
+from sklearn.metrics import classification_report, accuracy_score
+
+# Train SVM model
+svm_model = SVC(kernel='linear', random_state=42)
+svm_model.fit(X_train, y_train)
+# Predict on test data
+y_pred_svm = svm_model.predict(X_test)
+
+# Evaluate SVM performance
+print("SVM Classification Report:")
+print(classification_report(y_test, y_pred_svm))
+print(f"SVM Accuracy: {accuracy_score(y_test, y_pred_svm):.2f}")
+\end{minted}
+\end{codebox}
+
+
+\begin{codebox}[OutputC]{ SVM Classification Report and Confusion Matrices}
+\begin{minted}{python}
+SVM Classification Report:
+              precision    recall  f1-score   support
+
+      Closed       0.82      0.87      0.85       151
+        Open       0.87      0.81      0.84       150
+     no_yawn       0.95      0.99      0.97       141
+        yawn       0.99      0.94      0.97       138
+
+    accuracy                           0.90       580
+   macro avg       0.91      0.91      0.91       580
+weighted avg       0.90      0.90      0.90       580
+
+SVM Accuracy: 0.90
+\end{minted}
+
+\includegraphics[width=15cm]{Images/SVM_cm.png}
+
+\end{codebox}
+
+\textbf{Interpretation\\}
+
+
+Overall, the model excels at distinguishing between "yawn" and "no yawn," achieving high precision, recall, and F1-Score. It demonstrates high accuracy and balanced performance across most classes. However, some challenges remain in the eye-related classes, with precision for "closed" at 82\% and recall for "open" at 81\%. These issues should be monitored in future iterations to determine whether they represent persistent difficulties.
+
+The macro-average metrics—91\% for precision, recall, and F1-Score—indicate that the model performs well across all classes without bias. Similarly, the weighted average confirms strong performance across the dataset, reflecting the balanced class distribution achieved during preprocessing.
+
+
+
+
+
+
+\newpage
+
+\subsection{Random Forest Classifier}
+
+\bigskip
+
+\textbf{Description\\}
+
+\begin{itemize}
+    \item \textbf{Objective:} The Random Forest classifier works by creating an ensemble of decision trees to classify images as "eyes opened" or "eyes closed." 
+    It combines predictions from multiple decision trees to improve accuracy and reduce the risk of overfitting.
+    Each decision tree is trained on a random subset of the data and features (bagging and feature sampling) to ensure diversity.
+
+    \item \textbf{Input:} The Random Forest takes the image features as input. These features are the raw pixel values. Each feature is used to make binary decisions at the nodes of the decision trees.
+
+    \item \textbf{Output:} The classifier outputs a probability score or a class label:
+    \begin{itemize}
+        \item \textbf{Probability Score:} For each image, the Random Forest outputs the proportion of trees voting for each class.
+        \item \textbf{Class Label:} The final prediction is the class that receives the majority vote from all decision trees.
+    \end{itemize}
+
+    \item \textbf{Hyperparameters:}
+    \begin{itemize}
+        \item n estimators: The number of decision trees in the forest. Here, it is set to 100.
+        \item Random state : Fixed seed for the random number generator. We used 42.
+        \item Max depth : By default set to None, tree expands until all leaves contain only one class or until the number of samples in a node is less than min sample split (by default 2).
+    \end{itemize}
+    
+   
+\end{itemize}
+\bigskip
+\textbf{Code and outputs\\}
+\begin{codebox}[RF Classifier]{Random Forest Classifier \texttt{Python}}
+\begin{minted}{python}
+from sklearn.ensemble import RandomForestClassifier
+# Train Random Forest model
+rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
+rf_model.fit(X_train, y_train)
+
+# Predict on test data
+y_pred_rf = rf_model.predict(X_test)
+
+# Evaluate Random Forest performance
+print("Random Forest Classification Report:")
+print(classification_report(y_test, y_pred_rf))
+print(f"Random Forest Accuracy: {accuracy_score(y_test, y_pred_rf):.2f}")
+\end{minted}
+\end{codebox}
+
+
+\begin{codebox}[OutputD]{ Random Forest Classification Report and Confusion Matrices}
+\begin{minted}{python}
+Random Forest Classification Report:
+              precision    recall  f1-score   support
+
+      Closed       0.92      0.88      0.90       151
+        Open       0.89      0.92      0.90       150
+     no_yawn       0.92      1.00      0.96       141
+        yawn       1.00      0.92      0.96       138
+
+    accuracy                           0.93       580
+   macro avg       0.93      0.93      0.93       580
+weighted avg       0.93      0.93      0.93       580
+
+Random Forest Accuracy: 0.93
+\end{minted}
+
+\includegraphics[width=15cm]{Images/RF_cm.png}
+
+\end{codebox}
+
+\textbf{Interpretation\\}
+
+The accuracy of this model is better than the previous one.
+According to the confusion matrix, the number of errors in labelization has reduced significantly.
+The “open”/”closed” classes remain a bit difficult to labelize in comparison of the “yawn”, but it had made some progress. Note that this model tend to label a little bit more of “yawn” even if it implies more false negatives for the “no yawn” part.
+F1 and recall scores underline that this model performs well across all classes without bias.
+
+The Random Forest Classifier is slightly better for this dataset than the SVM with those hyperparameters. It has performed well for the eye with the “closed” and “open” class. But we need to also focus on the false negative result in the “yawn” class , and see if any particular features are causing confusion with “no yawn”.
+
+
+
+
+\newpage
+
+\subsection{Logistic Regression}
+
+\bigskip
+
+\textbf{Description\\}
+
+\begin{itemize}
+    \item \textbf{Objective:} Model the probability that a given image belongs to one of the two classes.
+    It uses a logistic (sigmoid) function to map the linear combination of input features to a probability score between 0 and 1, which can then be thresholded to assign a class label.
+
+    \item \textbf{Input:} The Logisitc Regression takes the image features as input. These features are the raw pixel values.Regression takes a vector of these features and applies a linear transformation (i.e., weighted sum) to calculate a score.
+
+    \item \textbf{Output:} Logistic Regression outputs a probability score between 0 and 1. This score represents the likelihood that the image belongs to a particular class (e.g., the probability that the image is "eyes opened").
+
+    \item \textbf{Hyperparameters:}
+    \begin{itemize}
+        \item max iter: Maximum number of iterations for the solver to converge. Here, it is set to 1000.
+        \item Random state : Fixed seed for the random number generator. We used 42.
+        \item Solver : lbfgs by default.
+    \end{itemize}
+   
+\end{itemize}
+\bigskip
+\bigskip
+\textbf{Code and outputs\\}
+\begin{codebox}[LR Classifier]{Logistic Regression \texttt{Python}}
+\begin{minted}{python}
+from sklearn.linear_model import LogisticRegression
+
+# Train Logistic Regression model
+lr_model = LogisticRegression(max_iter=1000, random_state=42)
+lr_model.fit(X_train, y_train)
+
+# Predict on test data
+y_pred_lr = lr_model.predict(X_test)
+
+# Evaluate Logistic Regression performance
+print("Logistic Regression Classification Report:")
+print(classification_report(y_test, y_pred_lr))
+print(f"Logistic Regression Accuracy: {accuracy_score(y_test, y_pred_lr):.2f}")
+\end{minted}
+\end{codebox}
+
+
+\begin{codebox}[OutputE]{ Logistic Regression Report and Confusion Matrices}
+\begin{minted}{python}
+Logistic Regression Classification Report:
+              precision    recall  f1-score   support
+
+      Closed       0.85      0.92      0.88       151
+        Open       0.92      0.83      0.87       150
+     no_yawn       0.93      0.99      0.96       141
+        yawn       0.99      0.93      0.96       138
+
+    accuracy                           0.92       580
+   macro avg       0.92      0.92      0.92       580
+weighted avg       0.92      0.92      0.92       580
+
+Logistic Regression Accuracy: 0.92
+\end{minted}
+
+\includegraphics[width=15cm]{Images/LR_cm.png}
+
+\end{codebox}
+
+\textbf{Interpretation\\}
+
+The overall accuracy for Logistic Regression is high, matching the Random Forest model's performance and slightly better than the SVM model. We lost a lot of precision in the “close” class -almost the double of errors- but overall made some progress for the other class, gaining some precision on the “open” class and in the “no yawn”. The macro average and the weighted average is almost the same as the other model.
+So, Logistic Regression offers competitive performance with some trade-offs compared to the other models.
+
+%---------------------------------------
+\newpage
+
+\section{Going Deeper}
+
+(Convolutional) Neural Network ... Will be implemented in Stage 3 !
+
+%---------------------------------------
+
+\insererbiblio
 \end{document}
