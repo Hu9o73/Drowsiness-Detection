@@ -516,6 +516,31 @@ So, Logistic Regression offers competitive performance with some trade-offs comp
 %---------------------------------------
 \newpage
 
+\section{Testing our models' Robustness}
+
+The problem with training on datasets found online, especially on Kaggle, is the similarity the data may exhibit. This can lead to models that overfit or underfit the data we provide.\\\\
+To avoid this issue, we gathered what we referred to as "Real-Life Data." Specifically, we took pictures ourselves in the real world (as opposed to sourcing them online) to test our models. These images featured a variety of shapes, new faces, and different eye conditions for testing.
+\\\\
+
+The results were promising out of 32 images we got:
+\begin{itemize}
+    \item 97\% of correctly labeled images by the SVM.
+    \item 97\% of correctly labeled images by the Random Forest.
+    \item 100\% of correctly labeled images by the Linear Regression.\\\\
+\end{itemize}
+
+Although this outcome can be partly attributed to the relatively small size of our Real-Life Dataset, it still highlights the robustness and consistency of our models.
+\\\\\\
+\textbf{Notes:}
+\begin{itemize}
+    \item We limited our tests to labeling images as "eyes open" or "eyes closed. This ensured the used pictures to be centered around the eyes of our volunteers, ensuring some kind of privacy regarding their identities.
+    \item The "Real-Life Data" isn't available on the project's GitHub, or anywhere else, for privacy matters.
+\end{itemize} 
+
+
+%---------------------------------------
+\newpage
+
 \section{Going Deeper}
 
 (Convolutional) Neural Network ... Will be implemented in Stage 3 !
