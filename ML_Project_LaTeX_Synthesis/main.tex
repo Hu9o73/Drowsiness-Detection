@@ -1,6 +1,17 @@
 \documentclass{modeleRapport}
 
-\addbibresource{biblio.bib}
+\bibliography{biblio.bib}
+\usepackage{lmodern}
+\usepackage{listings}
+\lstset{
+    numbers=none,   % No line numbers
+    frame=none,     % No frame around the code
+    basicstyle=\ttfamily, % Use a monospace font
+    language=Python  % Specify the language for syntax highlighting
+}
+\hbadness=10000
+\vbadness=10000
+\scrollmode % Send warning to logs not to show them upon compiling
 
 %--------------------------------------
 
@@ -28,15 +39,25 @@
 
 \subsection{Problem Definition}
 
-Drowsy driving, a serious hazard often resulting from insufficient rest, causes drivers to lose focus, react more slowly, and even experience brief micro-sleeps. This issue has devastating impacts, contributing to approximately 328,000 accidents, 109,000 injuries, and 6,400 fatalities annually (Bankrate \cite{Bankrate}). Unlike the effects of alcohol or drugs, drowsiness is harder to detect, creating a challenge for preventive measures. A 2019 AAA Foundation \cite{AAAFoundation} study reveals that while 96\% of drivers recognize the extreme risk of drowsy driving, only 29\% feel that they are at risk of getting pulled over by law enforcement. 
+Drowsy driving, a serious hazard often resulting from insufficient rest, causes drivers to lose focus, 
+react more slowly, and even experience brief micro-sleeps. This issue has devastating impacts, contributing to 
+approximately 328,000 accidents, 109,000 injuries, and 6,400 fatalities annually (Bankrate \cite{Bankrate}). 
+Unlike the effects of alcohol or drugs, drowsiness is harder to detect, creating a challenge for preventive measures. 
+A 2019 AAA Foundation \cite{AAAFoundation} study reveals that while 96\% of drivers recognize the extreme risk of drowsy 
+driving, only 29\% feel that they are at risk of getting pulled over by law enforcement. 
 
 
 \subsubsection{Existing technologies}
 
 \begin{itemize}
-\item \textbf{Mercedes-Benz ATTENTION ASSIST} \cite{Mercedes}: analyzes driving pattern in the first few minutes of the ride, and then detects patterns that might be due to fatigue, and alerts by a coffee cup symbol on the dashboard.  
+\item \textbf{Mercedes-Benz ATTENTION ASSIST} \cite{Mercedes}: analyzes driving pattern in the first few minutes of the 
+ride, and then detects patterns that might be due to fatigue, and alerts by a coffee cup symbol on the dashboard.  
 
-\item F\textbf{ord Driver Alert System} \cite{Ford}: monitor level of alertness based on driving behavior, an alert is displayed on the information display, that will be automatically cleared after a while and can also be cleared by pressing ok on the steering wheel. This feature can be turned off and will stay off even if you turn the ignition off and back on. This method can be impacted by windshield conditions such as bird droppings, ice, or snow. System is only available at speeds below activation speed (64 km/h) Proposed Solution and Business Objectives. 
+\item F\textbf{ord Driver Alert System} \cite{Ford}: monitor level of alertness based on driving behavior, an alert is 
+displayed on the information display, that will be automatically cleared after a while and can also be cleared by pressing 
+ok on the steering wheel. This feature can be turned off and will stay off even if you turn the ignition off and back on. 
+This method can be impacted by windshield conditions such as bird droppings, ice, or snow. System is only available at speeds 
+below activation speed (64 km/h) Proposed Solution and Business Objectives. 
 \end{itemize}
 
 Our project aims to develop a machine-learning-powered system that monitors driver fatigue in real-time. This solution will leverage a camera-based approach, ideally suited to modern vehicles already equipped with interior cameras. Unlike current technology, this model will focus directly on the driver’s condition by analyzing eye and mouth states, reducing dependence on external driving conditions. 
@@ -150,7 +171,7 @@ Our initial task involved meticulously cleaning and pre-processing the data. Thi
 In the process of preparing our data for our machine learning project, our group followed a set of essential steps.
 
 \begin{codebox}[Data cleaning]{Checking for missing or corrupted data \texttt{Python}}
-\begin{minted}{python}
+\begin{lstlisting}
 from PIL import Image
 import os
 
@@ -177,7 +198,7 @@ count_corrupted_images(path+"/train/Closed")
 count_corrupted_images(path+"/train/Open")
 count_corrupted_images(path+"/train/yawn")
 count_corrupted_images(path+"/train/no_yawn")
-\end{minted}
+\end{lstlisting}
 \end{codebox}
 
 \begin{codebox}[OutputA]{ Output of Code 1}
@@ -197,7 +218,7 @@ Total Corrupted Images: 0\\
 We don't have any corrputed file in the dataset. Let's check for duplicates:
 
 \begin{codebox}[Duplicate Check]{Checking for duplicate data \texttt{Python}}
-\begin{minted}{python}
+\begin{lstlisting}
 import hashlib
 import cv2
 import os
@@ -229,7 +250,7 @@ remove_duplicates(path + "/train/Closed")
 remove_duplicates(path + "/train/Open")
 remove_duplicates(path + "/train/yawn")
 remove_duplicates(path + "/train/no_yawn")
-\end{minted}
+\end{lstlisting}
 \end{codebox}
 
 \begin{codebox}[OutputB]{ Output of Code 3}
@@ -244,7 +265,7 @@ Finally, we will use some pre-processing techniques such as:\\
 \item \textbf{Image Transformation} to make all the image have the same size and increases the accuracy.\\
 
 \begin{codebox}[Image Transformation]{Image transformation - resize images \texttt{Python}}
-\begin{minted}{python}
+\begin{lstlisting}
 def load_images(dataset_path, target_size=(64, 64)):
     images = []
     labels = []
@@ -262,7 +283,7 @@ def load_images(dataset_path, target_size=(64, 64)):
     return np.array(images), np.array(labels)
 
 images, labels = load_images(path+'/train')
-\end{minted}
+\end{lstlisting}
 \end{codebox}
 
 \bigskip
@@ -270,10 +291,10 @@ images, labels = load_images(path+'/train')
 \item \textbf{Normalization} to creates a consistency in pixel value ranges for better training and numerical stability, to make every pixel of the image having a value between 0 and 1 instead of 0 and 255.\\
 
 \begin{codebox}[Image Normalization]{Normalize images \texttt{Python}}
-\begin{minted}{python}
+\begin{lstlisting}
 X, y = load_images(path+'/train')
 X = X/255.0
-\end{minted}
+\end{lstlisting}
 \end{codebox}
 
 \end{itemize}
@@ -307,7 +328,7 @@ In this section, we evaluate and compare the performance of three machine learni
 
 \textbf{Code and outputs}
 \begin{codebox}[SVM Classifier]{SVM Classifier \texttt{Python}}
-\begin{minted}{python}
+\begin{lstlisting}
 from sklearn.svm import SVC
 from sklearn.metrics import classification_report, accuracy_score
 
@@ -321,12 +342,12 @@ y_pred_svm = svm_model.predict(X_test)
 print("SVM Classification Report:")
 print(classification_report(y_test, y_pred_svm))
 print(f"SVM Accuracy: {accuracy_score(y_test, y_pred_svm):.2f}")
-\end{minted}
+\end{lstlisting}
 \end{codebox}
 
 
 \begin{codebox}[OutputC]{ SVM Classification Report and Confusion Matrices}
-\begin{minted}{python}
+\begin{lstlisting}
 SVM Classification Report:
               precision    recall  f1-score   support
 
@@ -340,9 +361,9 @@ SVM Classification Report:
 weighted avg       0.90      0.90      0.90       580
 
 SVM Accuracy: 0.90
-\end{minted}
+\end{lstlisting}
 
-\includegraphics[width=15cm]{Images/SVM_cm.png}
+\includegraphics[width=14cm]{Images/SVM_cm.png}
 
 \end{codebox}
 
@@ -391,7 +412,7 @@ The macro-average metrics—91\% for precision, recall, and F1-Score—indicate 
 \bigskip
 \textbf{Code and outputs\\}
 \begin{codebox}[RF Classifier]{Random Forest Classifier \texttt{Python}}
-\begin{minted}{python}
+\begin{lstlisting}
 from sklearn.ensemble import RandomForestClassifier
 # Train Random Forest model
 rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
@@ -404,12 +425,12 @@ y_pred_rf = rf_model.predict(X_test)
 print("Random Forest Classification Report:")
 print(classification_report(y_test, y_pred_rf))
 print(f"Random Forest Accuracy: {accuracy_score(y_test, y_pred_rf):.2f}")
-\end{minted}
+\end{lstlisting}
 \end{codebox}
 
 
 \begin{codebox}[OutputD]{ Random Forest Classification Report and Confusion Matrices}
-\begin{minted}{python}
+\begin{lstlisting}
 Random Forest Classification Report:
               precision    recall  f1-score   support
 
@@ -423,9 +444,9 @@ Random Forest Classification Report:
 weighted avg       0.93      0.93      0.93       580
 
 Random Forest Accuracy: 0.93
-\end{minted}
+\end{lstlisting}
 
-\includegraphics[width=15cm]{Images/RF_cm.png}
+\includegraphics[width=14cm]{Images/RF_cm.png}
 
 \end{codebox}
 
@@ -469,7 +490,7 @@ The Random Forest Classifier is slightly better for this dataset than the SVM wi
 \bigskip
 \textbf{Code and outputs\\}
 \begin{codebox}[LR Classifier]{Logistic Regression \texttt{Python}}
-\begin{minted}{python}
+\begin{lstlisting}
 from sklearn.linear_model import LogisticRegression
 
 # Train Logistic Regression model
@@ -483,12 +504,12 @@ y_pred_lr = lr_model.predict(X_test)
 print("Logistic Regression Classification Report:")
 print(classification_report(y_test, y_pred_lr))
 print(f"Logistic Regression Accuracy: {accuracy_score(y_test, y_pred_lr):.2f}")
-\end{minted}
+\end{lstlisting}
 \end{codebox}
 
 
 \begin{codebox}[OutputE]{ Logistic Regression Report and Confusion Matrices}
-\begin{minted}{python}
+\begin{lstlisting}
 Logistic Regression Classification Report:
               precision    recall  f1-score   support
 
@@ -502,9 +523,9 @@ Logistic Regression Classification Report:
 weighted avg       0.92      0.92      0.92       580
 
 Logistic Regression Accuracy: 0.92
-\end{minted}
+\end{lstlisting}
 
-\includegraphics[width=15cm]{Images/LR_cm.png}
+\includegraphics[width=14cm]{Images/LR_cm.png}
 
 \end{codebox}
 
@@ -543,7 +564,132 @@ Although this outcome can be partly attributed to the relatively small size of o
 
 \section{Going Deeper}
 
-(Convolutional) Neural Network ... Will be implemented in Stage 3 !
+\subsection{Implementing a Convolutional Neural Network}
+
+In this section, we detail the implementation of a Convolutional Neural Network (CNN) for classifying images in our dataset. 
+CNNs are a type of deep learning model particularly well-suited for image processing tasks. They are designed to automatically 
+and adaptively learn spatial hierarchies of features, from edges to shapes to complex structures, through the use of 
+convolutional and pooling layers.
+
+We used the Keras library to construct and train our model. Below, we present the architecture and the results of the 
+training process.
+
+\subsubsection{CNN Architecture}
+
+The architecture of our CNN consists of convolutional layers to extract spatial features, followed by pooling layers 
+to reduce dimensionality. After these, fully connected (dense) layers are used for classification. The network ends with a 
+softmax layer, which outputs probabilities for each class. The Python code below defines the CNN architecture
+
+
+\begin{codebox}[CNN architecture]{CNN Architecture definition \texttt{Python}}
+\begin{lstlisting}
+model = Sequential()
+
+# Convolutional layer 1
+model.add(Conv2D(32, (3, 3), activation="selu", input_shape=(64,64,1)))
+model.add(MaxPooling2D(2, 2))
+
+# Convolutional layer 2
+model.add(Conv2D(32, (3, 3), activation="selu"))
+model.add(MaxPooling2D(2, 2))
+
+# Convolutional layer 3
+model.add(Flatten())
+model.add(Dropout(0.5))
+
+# Convolutional layer 4
+model.add(Dense(64, activation="relu"))
+model.add(Dense(4, activation="softmax"))
+
+# Compilation
+model.compile(loss="categorical_crossentropy", metrics=["accuracy"], optimizer="adam")
+
+model.summary()
+\end{lstlisting}
+\end{codebox}
+
+\textbf{Explanation of the Architecture}
+
+\begin{enumerate}
+    \item \textbf{Convolutional Layers: }The first two layers are convolutional layers with 32 filters of size 3x3. The `selu` 
+    activation function is used, which helps with self-normalizing activations. These layers capture spatial features 
+    from the input images.
+    \item \textbf{Max Pooling Layers: }Each convolutional layer is followed by a max pooling layer with a pool size of 2x2. 
+    Pooling reduces the spatial dimensions, making the computation more efficient while retaining important features.
+    \item \textbf{Flattening and Dropout: }The output of the last pooling layer is flattened into a one-dimensional vector, 
+    transforming the spatial data into a format suitable for fully connected layers. A dropout layer with a rate of 0.5 is 
+    added to reduce overfitting by randomly deactivating 50\% of the neurons during training, ensuring that the model 
+    generalizes well to new data.
+\end{enumerate}
+
+
+
+
+
+\newpage
+
+\subsubsection{CNN Results and Performance Evaluation}
+
+After training the CNN on our dataset, we evaluated its performance using metrics such as precision, recall, F1-score, 
+and accuracy. The results of the evaluation, including a classification report and a confusion matrix, are presented below.
+
+\begin{codebox}[OutputG]{ CNN Results after being trained on our dataset}
+    \begin{lstlisting}
+    Model: "sequential_11"
+    19/19 [==============================] - 0s 8ms/step
+CNN Classification Report:
+            precision    recall  f1-score   support
+
+        0       0.97      0.99      0.98       151
+        1       0.93      0.97      0.95       141
+        2       0.97      0.92      0.94       149
+        3       0.99      0.97      0.98       139
+
+accuracy                            0.96       580
+macro avg       0.96      0.96      0.96       580
+weighted avg    0.96      0.96      0.96       580
+
+CNN Accuracy: 0.96
+    \end{lstlisting}
+
+\includegraphics[width=14cm]{Images/CNN_cm.png}
+
+\end{codebox}
+\newpage
+\textbf{Explanation of Metrics:}\\
+\begin{itemize}
+    \item \textbf{Precision:} Precision indicates the percentage of true positive predictions out of all positive 
+    predictions made by the model. In our case, precision values range between 93\% and 99\%, demonstrating that the 
+    model produces very few false positives.
+    \item \textbf{Recall:} Recall measures the percentage of actual positive samples that were correctly predicted. 
+    The recall values for the four classes range from 92\% to 99\%, indicating the model effectively identifies positive 
+    samples.
+    \item \textbf{F1-Score:} The F1-score is the harmonic mean of precision and recall, providing a balanced measure of 
+    the model's performance. Scores close to 1 across all classes show that the model performs consistently well.
+    \item \textbf{Accuracy:} The overall accuracy of the model is 96\%, indicating that it correctly classified 96\% of the 
+    samples in the test set.\\
+\end{itemize}
+
+\textbf{Confusion Matrix}\\
+
+The confusion matrix provides a detailed breakdown of the model's performance on each class by comparing the predicted and 
+actual labels. It highlights where the model makes errors and gives insight into which classes are more challenging for the 
+network to distinguish.\\
+
+\textbf{Insights from the Confusion Matrix:}\\
+\begin{itemize}
+    \item Most samples are classified correctly, as evidenced by the high values along the diagonal.
+    \item Misclassifications are minimal, with a few cases where the model confuses certain classes. 
+    These errors might be due to class similarity or limitations in the dataset.\\
+\end{itemize}
+
+\textbf{Conclusion:}\\
+
+The CNN achieves excellent performance with an overall accuracy of 96\%. The high precision, recall, 
+and F1-scores across all classes indicate that the model generalizes well to unseen data. While there are minor 
+misclassifications, these can potentially be addressed by augmenting the dataset, fine-tuning the model architecture, 
+or employing advanced techniques such as transfer learning.
+
 
 %---------------------------------------
 
