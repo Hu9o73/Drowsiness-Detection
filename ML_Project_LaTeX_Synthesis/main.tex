@@ -194,10 +194,8 @@ def count_corrupted_images(dataset_path):
     print(f"Total Corrupted Images: {corrupted_count}")
     return corrupted_count
 
+# Usage example
 count_corrupted_images(path+"/train/Closed")
-count_corrupted_images(path+"/train/Open")
-count_corrupted_images(path+"/train/yawn")
-count_corrupted_images(path+"/train/no_yawn")
 \end{lstlisting}
 \end{codebox}
 
@@ -337,11 +335,6 @@ svm_model = SVC(kernel='linear', random_state=42)
 svm_model.fit(X_train, y_train)
 # Predict on test data
 y_pred_svm = svm_model.predict(X_test)
-
-# Evaluate SVM performance
-print("SVM Classification Report:")
-print(classification_report(y_test, y_pred_svm))
-print(f"SVM Accuracy: {accuracy_score(y_test, y_pred_svm):.2f}")
 \end{lstlisting}
 \end{codebox}
 
@@ -420,11 +413,6 @@ rf_model.fit(X_train, y_train)
 
 # Predict on test data
 y_pred_rf = rf_model.predict(X_test)
-
-# Evaluate Random Forest performance
-print("Random Forest Classification Report:")
-print(classification_report(y_test, y_pred_rf))
-print(f"Random Forest Accuracy: {accuracy_score(y_test, y_pred_rf):.2f}")
 \end{lstlisting}
 \end{codebox}
 
