@@ -690,6 +690,47 @@ and F1-scores across all classes indicate that the model generalizes well to uns
 misclassifications, these can potentially be addressed by augmenting the dataset, fine-tuning the model architecture, 
 or employing advanced techniques such as transfer learning.
 
+\newpage
+
+\subsubsection{Further Investigations}
+
+To improve the robustness and generalizability of our models, we implemented various data augmentation techniques as 
+part of our "Further Investigations" efforts. These techniques aimed to make the training data more reflective of 
+real-world conditions and enhance the model's ability to perform well in diverse and unpredictable scenarios.\\
+
+\textbf{Data Augmentation Techniques}\\
+\begin{enumerate}
+    \item \textbf{Zooms:} 
+    \begin{itemize}
+        \item By randomly zooming into parts of the images, we simulated variations in the distance between the camera 
+        and the subject. This ensures the model learns to identify key features regardless of how closely or 
+        distantly the object is captured.
+    \end{itemize}
+
+    \item \textbf{Flips:}
+    \begin{itemize}
+        \item Horizontal flips were applied to the images to simulate changes in orientation, such as mirrored perspectives. 
+        This introduces variations the model might encounter in real-world environments, such as flipped camera angles or 
+        different viewing positions.
+    \end{itemize}
+
+    \item \textbf{Roations:}
+    \begin{itemize}
+        \item Small random rotations were applied to emulate conditions where the images are slightly tilted or 
+        captured from unconventional angles. This ensures the model does not overfit to perfectly aligned inputs 
+        and can generalize to imperfectly captured data.\\
+    \end{itemize}
+\end{enumerate}
+
+\textbf{Objective and Impact}
+
+The goal of applying these augmentation techniques was to transform our dataset into a more "real-world data"-prone 
+representation. Real-world data often comes with inherent noise, variability, and inconsistencies. By introducing these 
+augmentations, we encouraged our models to learn invariant features that are robust to such noise and variability.\\
+
+Additionally, these techniques help combat overfitting by providing the model with a broader range of examples during training. 
+This ensures that the model is not overly reliant on specific patterns present in the training data and can generalize better 
+when exposed to new data in real-life conditions.
 
 %---------------------------------------
 
